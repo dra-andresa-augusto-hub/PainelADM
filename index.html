@@ -472,7 +472,8 @@ async function activateSystem() {
     return;
   }
   
-  if (!code || code.length !== 8 || !code.startsWith('AA')) {
+  // CORREÇÃO: Aceita códigos AA seguido de 6 caracteres (letras ou números)
+  if (!code || code.length < 8 || !code.startsWith('AA')) {
     errorMsg.textContent = 'Código inválido! Use o formato AA000000';
     errorMsg.style.display = 'block';
     return;
@@ -487,7 +488,7 @@ async function activateSystem() {
     const snapshot = await codeRef.once('value');
     
     if (!snapshot.exists()) {
-      errorMsg.textContent = 'Código de ativação não encontrado!';
+      errorMsg.textContent = 'Código de ativação não encontrado no sistema!';
       errorMsg.style.display = 'block';
     } else {
       const codeData = snapshot.val();
@@ -534,7 +535,7 @@ async function activateSystem() {
     }
   } catch (error) {
     console.error('Erro:', error);
-    errorMsg.textContent = 'Erro de conexão. Verifique sua internet.';
+    errorMsg.textContent = 'Erro de conexão: ' + error.message;
     errorMsg.style.display = 'block';
   } finally {
     loading.style.display = 'none';
@@ -1035,7 +1036,7 @@ function renderEvolutions() {
   const list = document.getElementById('evolutionsList');
   list.innerHTML = '';
   
-  evolutions.filter(e => e.patientId === currentPatientId).sort((a, b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' a.time)).forEach(evo => {
+  evolutions.filter(e => e.patientId === currentPatientId).sort((a, b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time)).forEach(evo => {
     const div = document.createElement('div');
     div.style.cssText = 'background:#f7fafc;padding:15px;margin-bottom:10px;border-radius:8px;border-left:4px solid #1e3a5f';
     div.innerHTML = '<small style="color:#718096">' + formatDate(evo.date) + ' às ' + evo.time + '</small><p style="margin-top:5px">' + evo.text + '</p>';
